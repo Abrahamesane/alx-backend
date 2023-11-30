@@ -1,5 +1,5 @@
-import kue from 'kue';
-
+import { createQueue } from 'kue';
+const queue = createQueue({ name: 'push_notification_code_2' });
 const jobs = [
   {
     phoneNumber: '4153518780',
@@ -47,12 +47,21 @@ const jobs = [
   }
 ];
 
-const queue = kue.createQueue();
+for (const info of jobs) {
+  const job = queue.create('push_notification_code_2', info);
 
-jobs.forEach((job) => {
-  const newJob = queue.create('push_notification_code_2', job).save();
-  newJob.on('enqueue', () => console.log(`Notification job created ${newJob.id}`))
-  .on('complete', () => console.log(`Notification job ${newJob.id} completed`))
-  .on('failed', (err) => console.log(`Notification job ${newJob.id} failed: ${err}`))
-  .on('progress', (progress) => console.log(`Notification job ${newJob.id} ${progress}% complete`));
-});
+  job
+    .on('enqueue', () => {
+      console.log('Notification job created:', job.id);
+    })
+    .on('complete', () => {
+      console.log('Notification job', job.id, 'completed');
+    })
+    .on('failed', (err) => {
+      console.log('Notification job', job.id, 'failed:', err.message || err.toString());
+    })
+    .on('progress', (progress, _data) => {
+      console.log('Notification job', job.id, `${progress}% complete`);
+    });
+  job.save();
+}
