@@ -1,14 +1,16 @@
-import kue from 'kue';
+const kue = require('kue');
+const queue = kue.createQueue({name: 'push_notification_code'});
 
-const queue = kue.createQueue();
-const queueName = 'push_notification_code';
+const JOB_DATA = {
+  phoneNumber: "0211",
+  message: "Your account has been created",
+};
 
-function sendNotification(phoneNumber, message, done) {
-  console.log(`Sending notification to ${phoneNumber}, with message: ${message}`);
-  done();
-}
-
-queue.process(queueName, 2, (job, done) => {
-  const { phoneNumber, message } = job.data;
-  sendNotification(phoneNumber, message, done);
+const push_notification_code = queue.create('push_notification_code', JOB_DATA).save( function(err) {
+  if (!err) {
+    console.log("Notification job created: " + push_notification_code.id);
+  } else {
+    console.log("Notification job failed");
+  }
+  push_notification_code.on('complete', () => console.log("Notification job completed"));
 });
