@@ -1,20 +1,30 @@
-import redis from 'redis';
+/*
+ * Connects a redis client to the redis server
+ */
+import { createClient } from 'redis';
+const redis = require('redis');
+const client = createClient();
 
-const client = redis.createClient();
+client.on("error", (err) => console.log("Redis client not connected to the server: " + err));
 
-client.on('connect', () => console.log('Redis client connected to the server'));
+client.on("connect", () => console.log("Redis client connected to the server"));
 
-client.on('error', (err) => console.log(`Redis client not connected to the server: ${err.message}`));
+/*
+ * Creates a hash 
+ */
+const schools = {
+  Portland: 50,
+  Seattle: 80,
+  'New York': 20,
+  Bogota: 20,
+  Cali: 40,
+  Paris: 2,
+};
+for (const [field, val] of Object.entries(schools)) {
+  client.HSET('HolbertonSchools', field, val, redis.print);
+}
 
-const MAIN_KEY = 'HolbertonSchools';
-
-const keys = ['Portland', 'Seattle', 'New York', 'Bogota', 'Cali', 'Paris'];
-const values = [50, 80, 20, 20, 40, 2];
-
-keys.forEach((key, index) => {
-  client.hset(MAIN_KEY, key, values[index], redis.print);
-});
-
-client.hgetall(MAIN_KEY, (error, value) => {
-  console.log(value);
-});
+/*
+ * Prints a hash
+ */
+client.HGETALL('HolbertonSchools', (err, reply) => console.log(reply));
