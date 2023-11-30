@@ -3,9 +3,9 @@
 ## 0x03-Queuing_System_in_JS
 
 ## Learning Objectives
-###At the end of this project, you are expected to be able to explain to anyone, without the help of Google:
+### At the end of this project, you are expected to be able to explain to anyone, without the help of Google:
 
-*H ow to run a Redis server on your machine
+* How to run a Redis server on your machine
 * How to run simple operations with the Redis client
 * How to use a Redis client with Node JS for basic operations
 * How to store hash values in Redis
